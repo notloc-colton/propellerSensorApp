@@ -1,12 +1,14 @@
-import { Request, Response } from 'express';
-import SensorController from './sensor.controller';
-import SensorService from '../services/sensor.service'; 
-import { AirQualityData, AirQualitySummaryReport } from '../interfaces/airQualityData.interface';
+import { Request, Response } from "express";
+import SensorController from "./sensor.controller";
+import SensorService from "../services/sensor.service";
+import {
+  AirQualityData,
+  AirQualitySummaryReport,
+} from "../interfaces/airQualityData.interface";
 
+jest.mock("../services/sensor.service");
 
-jest.mock('../services/sensor.service');
-
-describe('SensorController', () => {
+describe("SensorController", () => {
   let mockRequest: Partial<Request>;
   let mockResponse: Partial<Response>;
 
@@ -18,40 +20,46 @@ describe('SensorController', () => {
     };
   });
 
-  it('should collect sensor data successfully', () => {
+  it("should collect sensor data successfully", () => {
     const mockData: AirQualityData = {
       carbonMonoxide: 10,
       groundLevelOzone: 0.5,
       nitrogenDioxide: 30,
       sulfurDioxide: 5,
-      sensorId: 'sensor123',
+      sensorId: "sensor123",
       timestamp: new Date(),
     };
 
     mockRequest.body = mockData;
 
-    SensorController.CollectSensorData(mockRequest as Request, mockResponse as Response);
+    SensorController.CollectSensorData(
+      mockRequest as Request,
+      mockResponse as Response,
+    );
 
     expect(SensorService.ProcessSensorData).toHaveBeenCalledWith(mockData);
     expect(mockResponse.status).toHaveBeenCalledWith(200);
-    expect(mockResponse.json).toHaveBeenCalledWith({ message: 'success' });
+    expect(mockResponse.json).toHaveBeenCalledWith({ message: "success" });
   });
 
-  it('should handle errors while collecting sensor data', () => {
-    const mockError = new Error('Test error');
+  it("should handle errors while collecting sensor data", () => {
+    const mockError = new Error("Test error");
 
-    jest.spyOn(SensorService, 'ProcessSensorData').mockImplementation(() => {
+    jest.spyOn(SensorService, "ProcessSensorData").mockImplementation(() => {
       throw mockError;
     });
 
-    SensorController.CollectSensorData(mockRequest as Request, mockResponse as Response);
+    SensorController.CollectSensorData(
+      mockRequest as Request,
+      mockResponse as Response,
+    );
 
     expect(mockResponse.status).toHaveBeenCalledWith(500);
     expect(mockResponse.json).toHaveBeenCalledTimes(1);
   });
 
-  it('should get pollutant summary report successfully', async () => {
-    const mockSummaryData:AirQualitySummaryReport = {
+  it("should get pollutant summary report successfully", async () => {
+    const mockSummaryData: AirQualitySummaryReport = {
       carbonMonoxide: {
         average: 10,
         maximum: { value: 20, timestamp: new Date() },
@@ -71,41 +79,56 @@ describe('SensorController', () => {
         average: 10,
         maximum: { value: 20, timestamp: new Date() },
         minimum: { value: 5, timestamp: new Date() },
-      }
+      },
     };
 
-    const mockQuery = { sensorId: 'sensor123' };
+    const mockQuery = { sensorId: "sensor123" };
     mockRequest.query = mockQuery;
 
-    jest.spyOn(SensorService, 'GetAirQualitySummary').mockReturnValue(mockSummaryData);
+    jest
+      .spyOn(SensorService, "GetAirQualitySummary")
+      .mockReturnValue(mockSummaryData);
 
-    await SensorController.GetPollutantSummaryReport(mockRequest as Request, mockResponse as Response);
+    await SensorController.GetPollutantSummaryReport(
+      mockRequest as Request,
+      mockResponse as Response,
+    );
 
-    expect(SensorService.GetAirQualitySummary).toHaveBeenCalledWith(mockQuery.sensorId);
+    expect(SensorService.GetAirQualitySummary).toHaveBeenCalledWith(
+      mockQuery.sensorId,
+    );
     expect(mockResponse.status).toHaveBeenCalledWith(200);
-    expect(mockResponse.json).toHaveBeenCalledWith({ summary: mockSummaryData });
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      summary: mockSummaryData,
+    });
   });
 
-  it('should handle empty summary data', async () => {
+  it("should handle empty summary data", async () => {
     mockRequest.query = {};
 
-    jest.spyOn(SensorService, 'GetAirQualitySummary').mockReturnValue(null);
+    jest.spyOn(SensorService, "GetAirQualitySummary").mockReturnValue(null);
 
-    await SensorController.GetPollutantSummaryReport(mockRequest as Request, mockResponse as Response);
+    await SensorController.GetPollutantSummaryReport(
+      mockRequest as Request,
+      mockResponse as Response,
+    );
 
     expect(mockResponse.status).toHaveBeenCalledWith(204);
     expect(mockResponse.json).toHaveBeenCalledWith({});
   });
 
-  it('should handle errors while getting pollutant summary report', async () => {
-    const mockError = new Error('Test error');
+  it("should handle errors while getting pollutant summary report", async () => {
+    const mockError = new Error("Test error");
     mockRequest.query = {};
 
-    jest.spyOn(SensorService, 'GetAirQualitySummary').mockImplementation(() => {
+    jest.spyOn(SensorService, "GetAirQualitySummary").mockImplementation(() => {
       throw mockError;
     });
 
-    await SensorController.GetPollutantSummaryReport(mockRequest as Request, mockResponse as Response);
+    await SensorController.GetPollutantSummaryReport(
+      mockRequest as Request,
+      mockResponse as Response,
+    );
 
     expect(mockResponse.status).toHaveBeenCalledWith(500);
     expect(mockResponse.json).toHaveBeenCalledWith({ error: mockError });

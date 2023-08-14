@@ -1,7 +1,7 @@
 {
   "name": "propeller-sensors-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "Propeller sensor app",
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
