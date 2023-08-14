@@ -1,11 +1,10 @@
-import { SensorDatabase } from "../database/sensor.database";
+import SensorDatabase  from "../database/sensor.database";
 import { AirQualityData } from "../models/airQualityData.model";
 
-export class SensorService {
-    private db: SensorDatabase
+class SensorService {
+    private db = SensorDatabase
 
-        constructor(db: SensorDatabase) {
-            this.db = db
+        constructor() {
         }
         public ProcessSensorData(data: AirQualityData){
             console.log("Inside processSensorData")
@@ -18,3 +17,4 @@ export class SensorService {
             return this.db.getAirQualityData()
         }
 }
+export default new SensorService()

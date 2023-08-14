@@ -1,9 +1,9 @@
-import express, { Express, Request, Response } from 'express';
+// import express, { Express, Request, Response } from 'express';
 
 
-export class App {
-    private express: Express
-    constructor(){
-        this.express = express()
-    }
-}
+// export class App {
+//     private express: Express
+//     constructor(){
+//         this.express = express()
+//     }
+// }

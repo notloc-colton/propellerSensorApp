@@ -1,9 +1,10 @@
 import { AirQualityData } from "../models/airQualityData.model";
 
-export class SensorDatabase {
+class SensorDatabase {
     dataMap = new Map<string, AirQualityData[]>()
     public addAirQualityData(data: AirQualityData){
         console.log("inside DB")
+        console.log(data)
         const existing = this.dataMap.get(data.sensorId)
         if (existing != undefined) {
             const appendedArray: AirQualityData[] = [...existing, data]
@@ -27,3 +28,4 @@ export class SensorDatabase {
         return response
     }
 }
+export default new SensorDatabase()
