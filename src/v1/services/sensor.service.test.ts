@@ -1,100 +1,122 @@
-import { AirQualitySummaryReport } from "../interfaces/airQualityData.interface";
-import SensorService from "./sensor.service"; // Update the path accordingly
+import SensorService from './sensor.service'; // Update the path accordingly
+import SensorDatabase from '../database/sensor.database'; // Update the path accordingly
+import { AirQualityData, AirQualitySummaryReport } from '../interfaces/airQualityData.interface';
+import { AirQualitySummary } from './airQualitySummary';
 
-jest.mock("./../database/sensor.database", () => ({
-  addAirQualityData: jest.fn(),
-  getAirQualityDataBySensorId: jest.fn(),
-  getAirQualityData: jest.fn(),
-}));
+// Mocking the dependencies
+jest.mock('../database/sensor.database');
+jest.mock('./airQualitySummary');
 
-describe("SensorService", () => {
-  let sensorService = SensorService;
+describe('SensorService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  it("should process sensor data correctly", () => {
-    const mockData = {
+  it('should process sensor data correctly', () => {
+    const mockData: AirQualityData = {
       carbonMonoxide: 10,
       groundLevelOzone: 0.5,
       nitrogenDioxide: 30,
       sulfurDioxide: 5,
-      sensorId: "sensor123",
+      sensorId: 'sensor123',
       timestamp: new Date(),
     };
 
-    sensorService.ProcessSensorData(mockData);
+    SensorService.ProcessSensorData(mockData);
 
-    expect(sensorService["db"].addAirQualityData).toHaveBeenCalledWith(
-      mockData,
-    );
+    expect(SensorDatabase.addAirQualityData).toHaveBeenCalledWith(mockData);
   });
 
-  it("should get air quality summary without sensorId", () => {
-    const mockRawData = [
-      {
-        carbonMonoxide: 10,
-        groundLevelOzone: 0.5,
-        nitrogenDioxide: 30,
-        sulfurDioxide: 5,
-        sensorId: "sensor123",
-        timestamp: new Date(),
-      },
-      {
-        carbonMonoxide: 20,
-        groundLevelOzone: 0.3,
-        nitrogenDioxide: 10,
-        sulfurDioxide: 10,
-        sensorId: "sensor555",
-        timestamp: new Date(),
-      },
-    ];
+//   it('should get air quality summary successfully with sensorId', () => {
+//     const mockSensorId = 'sensor123';
+//     const mockRawData: AirQualityData[] = [
+//       {
+//         carbonMonoxide: 10,
+//         groundLevelOzone: 0.5,
+//         nitrogenDioxide: 30,
+//         sulfurDioxide: 5,
+//         sensorId: 'sensor123',
+//         timestamp: new Date(),
+//       },
+//       // Add more mock data if needed
+//     ];
+//     SensorDatabase.getAirQualityDataBySensorId.mockReturnValue(mockRawData);
 
-    // sensorService['db'].getAirQualityData.mockReturnValue([mockRawData]);
-    // sensorService.ProcessSensorData({
-    //     carbonMonoxide: 10,
-    //     groundLevelOzone: 0.5,
-    //     nitrogenDioxide: 30,
-    //     sulfurDioxide: 5,
-    //     sensorId: 'sensor123',
-    //     timestamp: new Date(),
-    //   })
-    //   sensorService.ProcessSensorData({
-    //     carbonMonoxide: 20,
-    //     groundLevelOzone: 0.3,
-    //     nitrogenDioxide: 10,
-    //     sulfurDioxide: 10,
-    //     sensorId: 'sensor555',
-    //     timestamp: new Date(),
-    //   })
+//     const mockSummaryReport: AirQualitySummaryReport = {
+//       carbonMonoxide: {
+//         average: 10,
+//         maximum: { value: 20, timestamp: new Date() },
+//         minimum: { value: 5, timestamp: new Date() },
+//       },
+//       // Add more mock data if needed
+//     };
 
-    // const result = sensorService.GetAirQualitySummary(null);
+//     (AirQualitySummary.prototype.calculateAirQualitySummaryReport as jest.Mock).mockReturnValue(mockSummaryReport);
 
-    // expect(result.carbonMonoxide.average).toBe(15)
-    // expect(result.carbonMonoxide.maximum.value).toBe(20)
-    // expect(result.carbonMonoxide.maximum.timestamp).toBeDefined()
-    // expect(result.carbonMonoxide.minimum.value).toBe(10)
-    // expect(result.carbonMonoxide.minimum.timestamp).toBeDefined()
-    // expect(sensorService['db'].getAirQualityData).toHaveBeenCalledTimes(1);
-    // expect(sensorService['db'].getAirQualityDataBySensorId).toHaveBeenCalledTimes(0);
-  });
+//     const result = SensorService.GetAirQualitySummary(mockSensorId);
 
-  //   it('should get air quality summary with sensorId', () => {
-  //     const mockSensorId = 'sensor123';
-  //     const mockRawData = [
-  //       {
-  //         carbonMonoxide: 10,
-  //         groundLevelOzone: 0.5,
-  //         nitrogenDioxide: 30,
-  //         sulfurDioxide: 5,
-  //         sensorId: 'sensor123',
-  //         timestamp: new Date(),
-  //       },
+//     expect(SensorDatabase.getAirQualityDataBySensorId).toHaveBeenCalledWith(mockSensorId);
+//     expect(AirQualitySummary.prototype.addDataPoint).toHaveBeenCalledTimes(mockRawData.length);
+//     expect(result).toEqual(mockSummaryReport);
+//   });
 
-  //     ];
+//   it('should return null for empty summary with sensorId', () => {
+//     const mockSensorId = 'sensor123';
+//     // SensorDatabase.getAirQualityDataBySensorId.mockReturnValue([]);
 
-  //     sensorService['db'].getAirQualityDataBySensorId.mockReturnValue(mockRawData);
+//     const result = SensorService.GetAirQualitySummary(mockSensorId);
 
-  //     const result = sensorService.GetAirQualitySummary(mockSensorId);
-  //     expect(sensorService['db'].getAirQualityData).toHaveBeenCalledTimes(0);
-  //     expect(sensorService['db'].getAirQualityDataBySensorId).toHaveBeenCalledTimes(1);
+//     expect(result).toBeNull();
+//   });
 
-  //   });
+//   it('should get air quality summary successfully without sensorId', () => {
+//     const mockRawData: AirQualityData[] = [
+//       {
+//         carbonMonoxide: 10,
+//         groundLevelOzone: 0.5,
+//         nitrogenDioxide: 30,
+//         sulfurDioxide: 5,
+//         sensorId: 'sensor123',
+//         timestamp: new Date(),
+//       },
+//       // Add more mock data if needed
+//     ];
+//     SensorDatabase.getAirQualityData.mockReturnValue(mockRawData);
+
+//     const mockSummaryReport: AirQualitySummaryReport = {
+//       carbonMonoxide: {
+//         average: 10,
+//         maximum: { value: 20, timestamp: new Date() },
+//         minimum: { value: 5, timestamp: new Date() },
+//       },
+//       // Add more mock data if needed
+//     };
+
+//     (AirQualitySummary.prototype.calculateAirQualitySummaryReport as jest.Mock).mockReturnValue(mockSummaryReport);
+
+//     const result = SensorService.GetAirQualitySummary(undefined);
+
+//     expect(SensorDatabase.getAirQualityData).toHaveBeenCalled();
+//     expect(AirQualitySummary.prototype.addDataPoint).toHaveBeenCalledTimes(mockRawData.length);
+//     expect(result).toEqual(mockSummaryReport);
+//   });
+
+//   it('should return air quality data successfully', () => {
+//     const mockRawData: AirQualityData[] = [
+//       {
+//         carbonMonoxide: 10,
+//         groundLevelOzone: 0.5,
+//         nitrogenDioxide: 30,
+//         sulfurDioxide: 5,
+//         sensorId: 'sensor123',
+//         timestamp: new Date(),
+//       },
+//       // Add more mock data if needed
+//     ];
+//     SensorDatabase.getAirQualityData.mockReturnValue(mockRawData);
+
+//     const result = SensorService.GetAirQualityData();
+
+//     expect(result).toEqual(mockRawData);
+//   });
 });
