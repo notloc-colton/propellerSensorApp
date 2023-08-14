@@ -1,6 +1,9 @@
 import express, { Express, Request, Response } from 'express';
 import { AirQualityData } from '../models/airQualityData.model';
 
+
+//TODO: Add validation for timestamp and sensorID!!!!!!!!!!!!!!!!
+
 export async function  validateAirQualityData (req:Request, res:Response, next:express.NextFunction):Promise<void> {
     const body: AirQualityData = req.body
     let errors: string[] = []
@@ -22,6 +25,7 @@ export async function  validateAirQualityData (req:Request, res:Response, next:e
     }
     if (errors.length > 0) {
         res.status(400).json({errors})
+        return
     }
     next()
 }
