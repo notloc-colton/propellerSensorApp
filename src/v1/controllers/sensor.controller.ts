@@ -1,7 +1,6 @@
-import express, { Express, Request, Response } from "express";
+import { Request, Response } from "express";
 import { AirQualityData } from "../interfaces/airQualityData.interface";
 import SensorService from "../services/sensor.service";
-import SensorDatabase from "../database/sensor.database";
 
 class SensorController {
   public CollectSensorData(req: Request, res: Response) {
@@ -16,17 +15,6 @@ class SensorController {
       res.status(500).json({ error: err });
       return;
     }
-  }
-  public async GetAllSensorData(req: Request, res: Response) {
-    try {
-      const data = SensorService.GetAirQualityData();
-      res.status(200).json({ data });
-      return;
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: err });
-    }
-    return null;
   }
   public async GetPollutantSummaryReport(req: Request, res: Response) {
     const sensorId = req.query.sensorId?.toString();

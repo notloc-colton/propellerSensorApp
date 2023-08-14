@@ -49,7 +49,6 @@ export async function validateAirQualityData(
   }
 
   if (Number.isNaN(new Date(body.timestamp).getTime())) {
-    console.log("PROBLEM!");
     errors.push("invalid timestamp");
   }
   if (_.isEmpty(body.sensorId)) {
@@ -70,7 +69,6 @@ export function validateDataPoint(
   if (field == null) {
     return Error(`${name} field cannot be null`);
   }
-  console.log(field);
   if (field > max || field < min) {
     return Error(`${name} field must be between ${min} and ${max}`);
   }

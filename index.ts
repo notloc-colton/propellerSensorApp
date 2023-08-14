@@ -14,7 +14,6 @@ app.post(
   validators.validateAirQualityData,
   SensorController.CollectSensorData,
 );
-app.get("/api/v1/data", SensorController.GetAllSensorData);
 app.get("/api/v1/summary", SensorController.GetPollutantSummaryReport);
 
 const server = app.listen(port, () => {
