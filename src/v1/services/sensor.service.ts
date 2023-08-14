@@ -1,13 +1,13 @@
 import SensorDatabase  from "../database/sensor.database";
 import { AirQualityData, AirQualitySummaryReport } from "../interfaces/airQualityData.interface";
 import { AirQualitySummary} from "./airQualitySummary";
-class SensorService {
+export class SensorService {
     private db = SensorDatabase
 
         public ProcessSensorData(data: AirQualityData){
             this.db.addAirQualityData(data)
         }
-        public GetAirQualitySummary(sensorId: string | undefined): AirQualitySummaryReport{
+        public GetAirQualitySummary(sensorId: string | undefined): AirQualitySummaryReport | null{
             let rawData: AirQualityData[]
             if (sensorId != null) {
                 rawData = this.db.getAirQualityDataBySensorId(sensorId)
@@ -15,6 +15,9 @@ class SensorService {
                 rawData = this.db.getAirQualityData()
             }
             const dataSummary = new AirQualitySummary()
+            if (rawData.length <=0) {
+                return null
+            }
             rawData.forEach((data) => {
                 dataSummary.addDataPoint(data)
             })

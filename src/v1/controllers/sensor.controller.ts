@@ -32,6 +32,10 @@ class SensorController {
         const sensorId = req.query.sensorId?.toString()
         try{
             const data = SensorService.GetAirQualitySummary(sensorId)
+            if (data == null) {
+                res.status(204).json({})
+                return
+            }
             res.status(200).json({summary: data})
             return
         } catch(err) {
