@@ -1,4 +1,4 @@
-import { AirQualityData } from "../models/airQualityData.model";
+import { AirQualityData } from "../interfaces/airQualityData.interface";
 
 class SensorDatabase {
     dataMap = new Map<string, AirQualityData[]>()

@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
-import { AirQualityData } from '../models/airQualityData.model';
-
+import { AirQualityData } from '../interfaces/airQualityData.interface';
+import _ from "lodash"
 
 //TODO: Add validation for timestamp and sensorID!!!!!!!!!!!!!!!!
 
@@ -22,6 +22,14 @@ export async function  validateAirQualityData (req:Request, res:Response, next:e
     const sulfurDioxideeError = validateDataPoint("sulfurDioxide", body.sulfurDioxide, 1004, 0)
     if (sulfurDioxideeError != null) {
         errors.push(sulfurDioxideeError.message)
+    }
+    
+    if (Number.isNaN(new Date(body.timestamp).getTime())) {
+        console.log("PROBLEM!")
+        errors.push("invalid timestamp")
+    }
+    if (_.isEmpty(body.sensorId)){
+        errors.push("invalid sensorId")
     }
     if (errors.length > 0) {
         res.status(400).json({errors})
